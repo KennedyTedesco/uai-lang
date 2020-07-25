@@ -33,7 +33,7 @@ It will generate the `buildir`, then you can run the tests:
 $ meson test -C builddir/ -v 
 ```
 
-Testing using Valgrind (to find memory leaks):
+Testing using Valgrind (a tool to find memory leaks):
 
 ```bash
 $ meson test -C builddir/ -v --wrap=valgrind

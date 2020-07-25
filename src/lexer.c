@@ -20,6 +20,10 @@ static bool isAtEnd(Lexer *lexer) {
   return *lexer->current == '\0';
 }
 
+static bool isSpace(const char ch) {
+  return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+}
+
 static bool isAlpha(const char ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 }
@@ -61,11 +65,9 @@ static void readNumber(Lexer *lexer) {
 }
 
 static void skipWhitespace(Lexer *lexer) {
-  char ch = *lexer->current;
-  while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
-	lexer->line += ch == '\n' ? 1 : 0;
+  while (isSpace(*lexer->current)) {
+	lexer->line += *lexer->current == '\n' ? 1 : 0;
 	readChar(lexer);
-	ch = *lexer->current;
   }
 }
 

@@ -81,16 +81,13 @@ static Token makeToken(Lexer *lexer, TokenType type) {
 }
 
 Token nextToken(Lexer *lexer) {
-  if (isAtEnd(lexer)) {
-	return makeToken(lexer, T_EOF);
-  }
-
-  skipWhitespace(lexer);
-
   Token token;
+  skipWhitespace(lexer);
   lexer->start = lexer->current;
 
   switch (*lexer->current) {
+	case '\0': token = makeToken(lexer, T_EOF);
+	  break;
 	case '=': {
 	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_EQ);

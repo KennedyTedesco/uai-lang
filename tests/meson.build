@@ -6,7 +6,7 @@ unity_dep = dependency('unity',
 
 test('lexer',
     executable('test_lexer',
-        ['test_lexer.c', src_dir + '/lexer.c', src_dir + '/token.c'],
+        ['test_lexer.c', src_dir + '/lexer.c', src_dir + '/token.c', src_dir + '/memory.c'],
         dependencies: unity_dep
     )
 )

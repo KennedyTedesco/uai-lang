@@ -1,9 +1,8 @@
 #include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
 #include "lexer.h"
 #include "token.h"
+#include "memory.h"
 
 static Keyword keywords[] = {
 	{2, T_IF, "if"},
@@ -205,11 +204,21 @@ Token nextToken(Lexer *lexer) {
   return token;
 }
 
-Lexer newLexer(const char *source) {
-  Lexer lexer = {
-	  .line = 1,
-	  .start = source,
-	  .current = source,
-  };
+Lexer *newLexer(const char *source) {
+  Lexer *lexer = uai_malloc(sizeof(Lexer));
+
+  size_t source_len = strlen(source) + 1;
+  lexer->source = uai_malloc(source_len);
+  strncpy(lexer->source, source, source_len);
+
+  lexer->line = 1;
+  lexer->start = source;
+  lexer->current = source;
+
   return lexer;
+}
+
+void freeLexer(Lexer *lexer) {
+  uai_free(lexer->source);
+  uai_free(lexer);
 }

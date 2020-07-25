@@ -3,5 +3,6 @@ executable('uai',
         'uai.c',
         'lexer.c',
         'token.c',
+        'memory.c',
     ]
 )

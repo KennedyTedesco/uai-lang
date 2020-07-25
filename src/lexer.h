@@ -12,6 +12,8 @@ typedef struct {
 
 Token nextToken(Lexer *lexer);
 
-Lexer newLexer(const char *source);
+Lexer *newLexer(const char *source);
+
+void freeLexer(Lexer *lexer);
 
 #endif

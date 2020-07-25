@@ -4,8 +4,8 @@
 #include "token.h"
 
 typedef struct {
+  char *source;
   const char *start;
-  const char *peek;
   const char *current;
   int line;
 } Lexer;

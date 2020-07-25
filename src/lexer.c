@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include "lexer.h"
 #include "token.h"
@@ -27,11 +29,13 @@ static bool isDigit(const char ch) {
   return ch >= '0' && ch <= '9';
 }
 
+static char peek(Lexer *lexer) {
+  return *(lexer->current + 1);
+}
+
 static void readChar(Lexer *lexer) {
-  if (!isAtEnd(lexer)) {
-	lexer->current = lexer->peek;
-	lexer->peek++;
-  }
+  if (isAtEnd(lexer)) return;
+  lexer->current++;
 }
 
 static TokenType identifierType(Lexer *lexer) {
@@ -77,16 +81,6 @@ static Token makeToken(Lexer *lexer, TokenType type) {
   return token;
 }
 
-Lexer newLexer(const char *source) {
-  Lexer lexer = {
-	  .line = 1,
-	  .start = source,
-	  .current = source,
-	  .peek = source + 1,
-  };
-  return lexer;
-}
-
 Token nextToken(Lexer *lexer) {
   Token token;
   skipWhitespace(lexer);
@@ -96,7 +90,7 @@ Token nextToken(Lexer *lexer) {
 	case '\0': token = makeToken(lexer, T_EOF);
 	  break;
 	case '=': {
-	  if (*lexer->peek == '=') {
+	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_EQ);
 		readChar(lexer);
 	  } else {
@@ -105,7 +99,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '!': {
-	  if (*lexer->peek == '=') {
+	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_NOT_EQ);
 		readChar(lexer);
 	  } else {
@@ -114,7 +108,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '<': {
-	  if (*lexer->peek == '=') {
+	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_LT_EQ);
 		readChar(lexer);
 	  } else {
@@ -123,7 +117,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '>': {
-	  if (*lexer->peek == '=') {
+	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_GT_EQ);
 		readChar(lexer);
 	  } else {
@@ -132,21 +126,21 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '&': {
-	  if (*lexer->peek == '&') {
+	  if (peek(lexer) == '&') {
 		token = makeToken(lexer, T_AND);
 		readChar(lexer);
 		break;
 	  }
 	}
 	case '|': {
-	  if (*lexer->peek == '|') {
+	  if (peek(lexer) == '|') {
 		token = makeToken(lexer, T_OR);
 		readChar(lexer);
 		break;
 	  }
 	}
 	case '*': {
-	  if (*lexer->peek == '*') {
+	  if (peek(lexer) == '*') {
 		token = makeToken(lexer, T_POWER);
 		readChar(lexer);
 	  } else {
@@ -155,7 +149,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '+': {
-	  if (*lexer->peek == '+') {
+	  if (peek(lexer) == '+') {
 		token = makeToken(lexer, T_PLUS_PLUS);
 		readChar(lexer);
 	  } else {
@@ -164,7 +158,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
 	case '-': {
-	  if (*lexer->peek == '-') {
+	  if (peek(lexer) == '-') {
 		token = makeToken(lexer, T_MINUS_MINUS);
 		readChar(lexer);
 	  } else {
@@ -209,4 +203,13 @@ Token nextToken(Lexer *lexer) {
   }
   readChar(lexer);
   return token;
+}
+
+Lexer newLexer(const char *source) {
+  Lexer lexer = {
+	  .line = 1,
+	  .start = source,
+	  .current = source,
+  };
+  return lexer;
 }

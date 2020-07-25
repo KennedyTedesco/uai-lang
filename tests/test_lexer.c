@@ -30,42 +30,38 @@ void test_len(void) {
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token.type);
   TEST_ASSERT_EQUAL('v', *token.start);
-  TEST_ASSERT_EQUAL('a', *(token.start + token.length - 2));
-  TEST_ASSERT_EQUAL('r', *(token.start + token.length - 1));
-  TEST_ASSERT_EQUAL(3, token.length);
+  TEST_ASSERT_EQUAL('a', *(token.start + 1));
+  TEST_ASSERT_EQUAL('r', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_IDENT, token.type);
   TEST_ASSERT_EQUAL('a', *token.start);
-  TEST_ASSERT_EQUAL('a', *(token.start + token.length - 1));
-  TEST_ASSERT_EQUAL(1, token.length);
+  TEST_ASSERT_EQUAL('a', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_ASSIGN, token.type);
   TEST_ASSERT_EQUAL('=', *token.start);
-  TEST_ASSERT_EQUAL('=', *(token.start + token.length - 1));
-  TEST_ASSERT_EQUAL(1, token.length);
+  TEST_ASSERT_EQUAL('=', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_NUMBER, token.type);
   TEST_ASSERT_EQUAL('1', *token.start);
-  TEST_ASSERT_EQUAL('0', *(token.start + token.length - 1));
-  TEST_ASSERT_EQUAL(2, token.length);
+  TEST_ASSERT_EQUAL('0', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_PLUS, token.type);
   TEST_ASSERT_EQUAL('+', *token.start);
-  TEST_ASSERT_EQUAL(1, token.length);
+  TEST_ASSERT_EQUAL('+', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_NUMBER, token.type);
   TEST_ASSERT_EQUAL('1', *token.start);
-  TEST_ASSERT_EQUAL(1, token.length);
+  TEST_ASSERT_EQUAL('1', *token.end);
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_SEMICOLON, token.type);
   TEST_ASSERT_EQUAL(';', *token.start);
-  TEST_ASSERT_EQUAL(1, token.length);
+  TEST_ASSERT_EQUAL(';', *token.end);
 
   freeLexer(lexer);
 }

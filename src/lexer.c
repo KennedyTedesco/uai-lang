@@ -70,13 +70,14 @@ static void skipWhitespace(Lexer *lexer) {
 }
 
 static Token makeToken(Lexer *lexer, TokenType type) {
-  size_t length = (lexer->current - lexer->start);
-  Token token = {
-	  .type =  type,
-	  .line = lexer->line,
-	  .length = length == 0 ? 1 : length,
-	  .start = (lexer->current - length),
-  };
+  size_t length = lexer->current - lexer->start;
+
+  Token token;
+  token.type = type;
+  token.line = lexer->line;
+  token.start = lexer->current - length;
+  token.end = length == 0 ? token.start : (lexer->current - 1);
+
   return token;
 }
 

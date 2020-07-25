@@ -12,7 +12,7 @@ Goals of this project:
 
 TODO:
 
-- [*] Lexer
+- [x] Lexer
 - [ ] Parser
 - [ ] Compiler (Bytecode generation)
 - [ ] VM

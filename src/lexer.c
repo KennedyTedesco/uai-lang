@@ -207,13 +207,13 @@ Token nextToken(Lexer *lexer) {
 Lexer *newLexer(const char *source) {
   Lexer *lexer = uai_malloc(sizeof(Lexer));
 
-  size_t source_len = strlen(source) + 1;
+  size_t source_len = strlen(source);
   lexer->source = uai_malloc(source_len);
   strncpy(lexer->source, source, source_len);
 
   lexer->line = 1;
-  lexer->start = source;
-  lexer->current = source;
+  lexer->start = lexer->source;
+  lexer->current = lexer->source;
 
   return lexer;
 }

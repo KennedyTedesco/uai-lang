@@ -16,10 +16,6 @@ static Keyword keywords[] = {
 	{0, T_EOF, NULL}
 };
 
-static bool isAtEnd(Lexer *lexer) {
-  return *lexer->current == '\0';
-}
-
 static bool isAlpha(const char ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 }
@@ -33,7 +29,6 @@ static char peek(Lexer *lexer) {
 }
 
 static void readChar(Lexer *lexer) {
-  if (isAtEnd(lexer)) return;
   lexer->current++;
 }
 
@@ -81,7 +76,7 @@ static Token makeToken(Lexer *lexer, TokenType type) {
 }
 
 Token nextToken(Lexer *lexer) {
-  if (isAtEnd(lexer)) {
+  if (*lexer->current == '\0') {
 	return makeToken(lexer, T_EOF);
   }
 

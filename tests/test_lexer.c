@@ -6,7 +6,7 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_eat_spaces(void) {
-  Lexer *lexer = newLexer(" var 	foo1  =  \n10.5 != 5f;	");
+  Lexer *lexer = makeLexer(" var 	foo1  =  \n10.5 != 5f;	");
 
   TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
   TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
@@ -25,7 +25,7 @@ void test_eat_spaces(void) {
 
 void test_len(void) {
   Token token;
-  Lexer *lexer = newLexer("var a = 10 + 1;");
+  Lexer *lexer = makeLexer("var a = 10 + 1;");
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token.type);
@@ -67,7 +67,7 @@ void test_len(void) {
 }
 
 void test_tokens(void) {
-  Lexer *lexer = newLexer(
+  Lexer *lexer = makeLexer(
 	  "var foo1 = 10;\n"
 	  "foo_bar\n"
 	  "_bar\n"
@@ -242,7 +242,7 @@ void test_tokens(void) {
 }
 
 void test_tokens_names(void) {
-  Lexer *lexer = newLexer("var a = 10 + 1;");
+  Lexer *lexer = makeLexer("var a = 10 + 1;");
   TEST_ASSERT_EQUAL_STRING("VAR", tokenName(nextToken(lexer).type));
   TEST_ASSERT_EQUAL_STRING("IDENT", tokenName(nextToken(lexer).type));
   TEST_ASSERT_EQUAL_STRING("=", tokenName(nextToken(lexer).type));

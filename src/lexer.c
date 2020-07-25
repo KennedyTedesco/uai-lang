@@ -207,7 +207,7 @@ Token nextToken(Lexer *lexer) {
   return token;
 }
 
-Lexer *newLexer(const char *source) {
+Lexer *makeLexer(const char *source) {
   Lexer *lexer = uai_malloc(sizeof(Lexer));
 
   size_t size = strlen(source) + 1;

@@ -12,7 +12,7 @@ typedef struct {
 
 Token nextToken(Lexer *lexer);
 
-Lexer *newLexer(const char *source);
+Lexer *makeLexer(const char *source);
 
 void freeLexer(Lexer *lexer);
 

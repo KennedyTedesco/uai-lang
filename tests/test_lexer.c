@@ -6,7 +6,7 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_eat_spaces(void) {
-  Lexer *lexer = newLexer(" var 	foo1  =  \n10.5 != 5f;");
+  Lexer *lexer = newLexer(" var 	foo1  =  \n10.5 != 5f;	");
 
   TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
   TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);

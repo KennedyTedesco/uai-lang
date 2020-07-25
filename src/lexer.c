@@ -16,10 +16,6 @@ static Keyword keywords[] = {
 	{0, T_EOF, NULL}
 };
 
-static bool isAtEnd(Lexer *lexer) {
-  return *lexer->current == '\0';
-}
-
 static bool isAlpha(const char ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 }
@@ -32,8 +28,7 @@ static char peek(Lexer *lexer) {
   return *(lexer->current + 1);
 }
 
-static void readChar(Lexer *lexer) {
-  if (isAtEnd(lexer)) return;
+static void advance(Lexer *lexer) {
   lexer->current++;
 }
 
@@ -49,14 +44,14 @@ static TokenType identifierType(Lexer *lexer) {
 
 static void readIdentifier(Lexer *lexer) {
   while (isAlpha(*lexer->current) || isDigit(*lexer->current)) {
-	readChar(lexer);
+	advance(lexer);
   }
 }
 
 static void readNumber(Lexer *lexer) {
   const char *list = ".xXaAbBcCdDeEfF";
   while (isDigit(*lexer->current) || strchr(list, *lexer->current) != NULL) {
-	readChar(lexer);
+	advance(lexer);
   }
 }
 
@@ -64,7 +59,7 @@ static void skipWhitespace(Lexer *lexer) {
   char ch = *lexer->current;
   while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
 	lexer->line += ch == '\n' ? 1 : 0;
-	readChar(lexer);
+	advance(lexer);
 	ch = *lexer->current;
   }
 }
@@ -81,7 +76,7 @@ static Token makeToken(Lexer *lexer, TokenType type) {
 }
 
 Token nextToken(Lexer *lexer) {
-  if (isAtEnd(lexer)) {
+  if (*lexer->current == '\0') {
 	return makeToken(lexer, T_EOF);
   }
 
@@ -94,7 +89,7 @@ Token nextToken(Lexer *lexer) {
 	case '=': {
 	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_EQ);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_ASSIGN);
 	  }
@@ -103,7 +98,7 @@ Token nextToken(Lexer *lexer) {
 	case '!': {
 	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_NOT_EQ);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_NOT);
 	  }
@@ -112,7 +107,7 @@ Token nextToken(Lexer *lexer) {
 	case '<': {
 	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_LT_EQ);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_LT);
 	  }
@@ -121,7 +116,7 @@ Token nextToken(Lexer *lexer) {
 	case '>': {
 	  if (peek(lexer) == '=') {
 		token = makeToken(lexer, T_GT_EQ);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_GT);
 	  }
@@ -130,21 +125,21 @@ Token nextToken(Lexer *lexer) {
 	case '&': {
 	  if (peek(lexer) == '&') {
 		token = makeToken(lexer, T_AND);
-		readChar(lexer);
+		advance(lexer);
 		break;
 	  }
 	}
 	case '|': {
 	  if (peek(lexer) == '|') {
 		token = makeToken(lexer, T_OR);
-		readChar(lexer);
+		advance(lexer);
 		break;
 	  }
 	}
 	case '*': {
 	  if (peek(lexer) == '*') {
 		token = makeToken(lexer, T_POWER);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_ASTERISK);
 	  }
@@ -153,7 +148,7 @@ Token nextToken(Lexer *lexer) {
 	case '+': {
 	  if (peek(lexer) == '+') {
 		token = makeToken(lexer, T_PLUS_PLUS);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_PLUS);
 	  }
@@ -162,7 +157,7 @@ Token nextToken(Lexer *lexer) {
 	case '-': {
 	  if (peek(lexer) == '-') {
 		token = makeToken(lexer, T_MINUS_MINUS);
-		readChar(lexer);
+		advance(lexer);
 	  } else {
 		token = makeToken(lexer, T_MINUS);
 	  }
@@ -203,7 +198,7 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	}
   }
-  readChar(lexer);
+  advance(lexer);
   return token;
 }
 

@@ -1,4 +1,4 @@
-## UAI
+## UAI Programming Language
 
 [![Test Status](https://github.com/KennedyTedesco/uai-lang/workflows/main/badge.svg)](https://github.com/KennedyTedesco/uai-lang/actions)
 

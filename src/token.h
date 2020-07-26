@@ -46,7 +46,7 @@ typedef enum {
   T_WHILE,
 } TokenType;
 
-static const char *tokenNames[] = {
+static const char *TokenNames[] = {
 	"EOF",
 	"ILLEGAL",
 	"IDENT",

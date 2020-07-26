@@ -4,7 +4,7 @@
 #include "token.h"
 #include "memory.h"
 
-static Keyword keywords[] = {
+const static Keyword keywords[] = {
 	{2, T_IF, "if"},
 	{2, T_FN, "fn"},
 	{3, T_VAR, "var"},

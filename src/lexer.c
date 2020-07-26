@@ -42,7 +42,7 @@ static void readChar(Lexer *lexer) {
 }
 
 static TokenType identifierType(Lexer *lexer) {
-  size_t length = lexer->current - lexer->start;
+  const size_t length = lexer->current - lexer->start;
   for (short i = 0; keywords[i].literal != NULL; i++) {
 	if (length == keywords[i].length && strncmp(lexer->start, keywords[i].literal, length) == 0) {
 	  return keywords[i].type;
@@ -72,7 +72,7 @@ static void skipWhitespace(Lexer *lexer) {
 }
 
 static Token makeToken(Lexer *lexer, TokenType type) {
-  size_t length = lexer->current - lexer->start;
+  const size_t length = lexer->current - lexer->start;
 
   Token token;
   token.type = type;
@@ -210,7 +210,7 @@ Token nextToken(Lexer *lexer) {
 Lexer *makeLexer(const char *source) {
   Lexer *lexer = uai_malloc(sizeof(Lexer));
 
-  size_t size = strlen(source) + 1;
+  const size_t size = strlen(source) + 1;
   lexer->source = uai_malloc(size);
   strncpy(lexer->source, source, size);
 

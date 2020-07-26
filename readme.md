@@ -1,5 +1,9 @@
 ## UAI
 
+#### Status
+
+[![Test Status](https://github.com/KennedyTedesco/uai-lang/workflows/main/badge.svg)](https://github.com/KennedyTedesco/uai-lang/actions)
+
 **_(A working in progress)._**
 
 UAI is a C-like scripting language.

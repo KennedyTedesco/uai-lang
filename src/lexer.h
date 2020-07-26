@@ -4,7 +4,7 @@
 #include "token.h"
 
 typedef struct {
-  const char *source;
+  char *source;
   const char *start;
   const char *current;
   int line;

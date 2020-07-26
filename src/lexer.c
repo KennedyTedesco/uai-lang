@@ -222,6 +222,6 @@ Lexer *makeLexer(const char *source) {
 }
 
 void freeLexer(Lexer *lexer) {
-  uai_free(lexer->source);
-  uai_free(lexer);
+  uai_free((void *)lexer->source);
+  uai_free((void *)lexer);
 }

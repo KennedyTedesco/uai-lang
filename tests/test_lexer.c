@@ -29,7 +29,7 @@ void test_len(void) {
 
   token = nextToken(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token.type);
-  TEST_ASSERT_EQUAL('v', *token.start);
+  TEST_ASSERT_EQUAL('a', *token.start);
   TEST_ASSERT_EQUAL('a', *(token.start + 1));
   TEST_ASSERT_EQUAL('r', *token.end);
 

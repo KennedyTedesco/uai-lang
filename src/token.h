@@ -53,6 +53,7 @@ typedef struct {
 } Keyword;
 
 typedef struct {
+  size_t length;
   TokenType type;
   const char *end;
   const char *start;

@@ -64,9 +64,20 @@ static void readNumber(Lexer *lexer) {
   }
 }
 
+static void incrementLine(Lexer *lexer, const char ch) {
+  lexer->line += ch == '\n' ? 1 : 0;
+}
+
+static void readString(Lexer *lexer) {
+  do {
+	readChar(lexer);
+	incrementLine(lexer, *lexer->current);
+  } while (*lexer->current != '"' && !isAtEnd(lexer));
+}
+
 static void skipWhitespace(Lexer *lexer) {
   while (isSpace(*lexer->current)) {
-	lexer->line += *lexer->current == '\n' ? 1 : 0;
+	incrementLine(lexer, *lexer->current);
 	readChar(lexer);
   }
 }
@@ -78,16 +89,27 @@ static Token makeToken(Lexer *lexer, TokenType type) {
   token.type = type;
   token.line = lexer->line;
   token.start = lexer->current - length;
+  token.length = length == 0 ? 1 : length;
   token.end = length == 0 ? token.start : (lexer->current - 1);
 
   return token;
 }
 
 Token nextToken(Lexer *lexer) {
-  Token token;
   skipWhitespace(lexer);
   lexer->start = lexer->current;
 
+  if (isAlpha(*lexer->current)) {
+	readIdentifier(lexer);
+	return makeToken(lexer, identifierType(lexer));
+  }
+
+  if (isDigit(*lexer->current)) {
+	readNumber(lexer);
+	return makeToken(lexer, T_NUMBER);
+  }
+
+  Token token;
   switch (*lexer->current) {
 	case '\0': token = makeToken(lexer, T_EOF);
 	  break;
@@ -168,6 +190,13 @@ Token nextToken(Lexer *lexer) {
 	  }
 	  break;
 	}
+	case '"': {
+	  readString(lexer);
+	  token = makeToken(lexer, T_STRING);
+	  token.end++;
+	  token.length++;
+	  break;
+	}
 	case '/': token = makeToken(lexer, T_SLASH);
 	  break;
 	case '%': token = makeToken(lexer, T_MODULO);
@@ -190,18 +219,8 @@ Token nextToken(Lexer *lexer) {
 	  break;
 	case ']': token = makeToken(lexer, T_RBRACKET);
 	  break;
-	default: {
-	  if (isAlpha(*lexer->current)) {
-		readIdentifier(lexer);
-		return makeToken(lexer, identifierType(lexer));
-	  } else if (isDigit(*lexer->current)) {
-		readNumber(lexer);
-		return makeToken(lexer, T_NUMBER);
-	  } else {
-		token = makeToken(lexer, T_ILLEGAL);
-	  }
+	default: token = makeToken(lexer, T_ILLEGAL);
 	  break;
-	}
   }
   readChar(lexer);
   return token;

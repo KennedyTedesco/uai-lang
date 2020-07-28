@@ -23,7 +23,7 @@ TODO:
 
 This project uses [Meson](https://mesonbuild.com/Quick-guide.html) (CMake is good, but Meson, besides its powerful, is more friendly with newcomers).
 
-So, this first thing you need to do after cloning this repo is:
+So, the first thing you need to do after cloning this repo is:
 
 ```bash
 $ meson builddir

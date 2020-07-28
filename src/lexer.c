@@ -230,7 +230,7 @@ Lexer *makeLexer(const char *source) {
   Lexer *lexer = uai_malloc(sizeof(Lexer));
 
   const size_t size = strlen(source) + 1;
-  lexer->source = uai_malloc(size);
+  lexer->source = uai_malloc(sizeof(source) * size);
   strncpy(lexer->source, source, size);
 
   lexer->line = 1;

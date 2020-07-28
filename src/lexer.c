@@ -37,7 +37,8 @@ static char peek(Lexer *lexer) {
 }
 
 static void readChar(Lexer *lexer) {
-  if (isAtEnd(lexer)) return;
+  if (isAtEnd(lexer))
+	return;
   lexer->current++;
 }
 
@@ -111,116 +112,116 @@ Token nextToken(Lexer *lexer) {
 
   Token token;
   switch (*lexer->current) {
-	case '\0': token = makeToken(lexer, T_EOF);
-	  break;
-	case '=': {
-	  if (peek(lexer) == '=') {
-		token = makeToken(lexer, T_EQ);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_ASSIGN);
-	  }
+  case '\0': token = makeToken(lexer, T_EOF);
+	break;
+  case '=': {
+	if (peek(lexer) == '=') {
+	  token = makeToken(lexer, T_EQ);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_ASSIGN);
+	}
+	break;
+  }
+  case '!': {
+	if (peek(lexer) == '=') {
+	  token = makeToken(lexer, T_NOT_EQ);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_NOT);
+	}
+	break;
+  }
+  case '<': {
+	if (peek(lexer) == '=') {
+	  token = makeToken(lexer, T_LT_EQ);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_LT);
+	}
+	break;
+  }
+  case '>': {
+	if (peek(lexer) == '=') {
+	  token = makeToken(lexer, T_GT_EQ);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_GT);
+	}
+	break;
+  }
+  case '&': {
+	if (peek(lexer) == '&') {
+	  token = makeToken(lexer, T_AND);
+	  readChar(lexer);
 	  break;
 	}
-	case '!': {
-	  if (peek(lexer) == '=') {
-		token = makeToken(lexer, T_NOT_EQ);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_NOT);
-	  }
+  }
+  case '|': {
+	if (peek(lexer) == '|') {
+	  token = makeToken(lexer, T_OR);
+	  readChar(lexer);
 	  break;
 	}
-	case '<': {
-	  if (peek(lexer) == '=') {
-		token = makeToken(lexer, T_LT_EQ);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_LT);
-	  }
-	  break;
+  }
+  case '*': {
+	if (peek(lexer) == '*') {
+	  token = makeToken(lexer, T_POWER);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_ASTERISK);
 	}
-	case '>': {
-	  if (peek(lexer) == '=') {
-		token = makeToken(lexer, T_GT_EQ);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_GT);
-	  }
-	  break;
+	break;
+  }
+  case '+': {
+	if (peek(lexer) == '+') {
+	  token = makeToken(lexer, T_PLUS_PLUS);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_PLUS);
 	}
-	case '&': {
-	  if (peek(lexer) == '&') {
-		token = makeToken(lexer, T_AND);
-		readChar(lexer);
-		break;
-	  }
+	break;
+  }
+  case '-': {
+	if (peek(lexer) == '-') {
+	  token = makeToken(lexer, T_MINUS_MINUS);
+	  readChar(lexer);
+	} else {
+	  token = makeToken(lexer, T_MINUS);
 	}
-	case '|': {
-	  if (peek(lexer) == '|') {
-		token = makeToken(lexer, T_OR);
-		readChar(lexer);
-		break;
-	  }
-	}
-	case '*': {
-	  if (peek(lexer) == '*') {
-		token = makeToken(lexer, T_POWER);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_ASTERISK);
-	  }
-	  break;
-	}
-	case '+': {
-	  if (peek(lexer) == '+') {
-		token = makeToken(lexer, T_PLUS_PLUS);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_PLUS);
-	  }
-	  break;
-	}
-	case '-': {
-	  if (peek(lexer) == '-') {
-		token = makeToken(lexer, T_MINUS_MINUS);
-		readChar(lexer);
-	  } else {
-		token = makeToken(lexer, T_MINUS);
-	  }
-	  break;
-	}
-	case '"': {
-	  readString(lexer);
-	  token = makeToken(lexer, T_STRING);
-	  token.end++;
-	  token.length++;
-	  break;
-	}
-	case '/': token = makeToken(lexer, T_SLASH);
-	  break;
-	case '%': token = makeToken(lexer, T_MODULO);
-	  break;
-	case ',': token = makeToken(lexer, T_COMMA);
-	  break;
-	case ';': token = makeToken(lexer, T_SEMICOLON);
-	  break;
-	case ':': token = makeToken(lexer, T_COLON);
-	  break;
-	case '(': token = makeToken(lexer, T_LPAREN);
-	  break;
-	case ')': token = makeToken(lexer, T_RPAREN);
-	  break;
-	case '{': token = makeToken(lexer, T_LBRACE);
-	  break;
-	case '}': token = makeToken(lexer, T_RBRACE);
-	  break;
-	case '[': token = makeToken(lexer, T_LBRACKET);
-	  break;
-	case ']': token = makeToken(lexer, T_RBRACKET);
-	  break;
-	default: token = makeToken(lexer, T_ILLEGAL);
-	  break;
+	break;
+  }
+  case '"': {
+	readString(lexer);
+	token = makeToken(lexer, T_STRING);
+	token.end++;
+	token.length++;
+	break;
+  }
+  case '/': token = makeToken(lexer, T_SLASH);
+	break;
+  case '%': token = makeToken(lexer, T_MODULO);
+	break;
+  case ',': token = makeToken(lexer, T_COMMA);
+	break;
+  case ';': token = makeToken(lexer, T_SEMICOLON);
+	break;
+  case ':': token = makeToken(lexer, T_COLON);
+	break;
+  case '(': token = makeToken(lexer, T_LPAREN);
+	break;
+  case ')': token = makeToken(lexer, T_RPAREN);
+	break;
+  case '{': token = makeToken(lexer, T_LBRACE);
+	break;
+  case '}': token = makeToken(lexer, T_RBRACE);
+	break;
+  case '[': token = makeToken(lexer, T_LBRACKET);
+	break;
+  case ']': token = makeToken(lexer, T_RBRACKET);
+	break;
+  default: token = makeToken(lexer, T_ILLEGAL);
+	break;
   }
   readChar(lexer);
   return token;

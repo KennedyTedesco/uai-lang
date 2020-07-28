@@ -19,6 +19,10 @@ TODO:
 - [ ] Compiler (Bytecode generation)
 - [ ] VM
 
+Future scope:
+
+- [ ] Unicode support for strings
+
 ### Compiling
 
 This project uses [Meson](https://mesonbuild.com/Quick-guide.html) (CMake is good, but Meson, besides its powerful, is more friendly with newcomers).

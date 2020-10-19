@@ -44,22 +44,65 @@ typedef enum {
   T_ELSE,
   T_RETURN,
   T_WHILE,
-} TokenType;
+} token_type;
 
-typedef struct {
+static const char *token_names[] = {
+	"EOF",
+	"ILLEGAL",
+	"IDENT",
+	"STRING",
+	"NUMBER",
+	"=",
+	"+",
+	"-",
+	"*",
+	"/",
+	"%",
+	"**",
+	"++",
+	"--",
+	"!",
+	"&&",
+	"||",
+	",",
+	";",
+	":",
+	"(",
+	")",
+	"{",
+	"}",
+	"[",
+	"]",
+	"<",
+	">",
+	"==",
+	"<=",
+	">=",
+	"!=",
+	"FUNCTION",
+	"VAR",
+	"TRUE",
+	"FALSE",
+	"IF",
+	"ELSE",
+	"RETURN",
+	"WHILE",
+};
+
+typedef struct keyword_t {
   size_t length;
-  TokenType type;
+  token_type type;
   const char *literal;
-} Keyword;
+} keyword_t;
 
-typedef struct {
+typedef struct token_t {
   size_t length;
-  TokenType type;
+  token_type type;
   const char *end;
   const char *start;
   int line;
-} Token;
+} token_t;
 
-const char *tokenName(TokenType type);
+const char *token_name(token_type type);
 
 #endif

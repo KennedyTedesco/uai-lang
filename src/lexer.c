@@ -4,7 +4,7 @@
 #include "token.h"
 #include "memory.h"
 
-static const Keyword keywords[] = {
+static const keyword_t keywords[] = {
 	{2, T_IF, "if"},
 	{2, T_FN, "fn"},
 	{3, T_VAR, "var"},
@@ -16,33 +16,33 @@ static const Keyword keywords[] = {
 	{0, T_EOF, NULL}
 };
 
-static bool isAtEnd(Lexer *lexer) {
+static bool is_end(lexer_t *lexer) {
   return *lexer->current == '\0';
 }
 
-static bool isSpace(const char ch) {
+static bool is_space(const char ch) {
   return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
 }
 
-static bool isAlpha(const char ch) {
+static bool is_alpha(const char ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
 }
 
-static bool isDigit(const char ch) {
+static bool is_digit(const char ch) {
   return ch >= '0' && ch <= '9';
 }
 
-static char peek(Lexer *lexer) {
+static char peek(lexer_t *lexer) {
   return *(lexer->current + 1);
 }
 
-static void readChar(Lexer *lexer) {
-  if (isAtEnd(lexer))
-	return;
-  lexer->current++;
+static void advance(lexer_t *lexer) {
+  if (!is_end(lexer)) {
+	lexer->current++;
+  }
 }
 
-static TokenType identifierType(Lexer *lexer) {
+static token_type ident_type(lexer_t *lexer) {
   const size_t length = lexer->current - lexer->start;
   for (short i = 0; keywords[i].literal != NULL; i++) {
 	if (length == keywords[i].length && strncmp(lexer->start, keywords[i].literal, length) == 0) {
@@ -52,41 +52,41 @@ static TokenType identifierType(Lexer *lexer) {
   return T_IDENT;
 }
 
-static void readIdentifier(Lexer *lexer) {
-  while (isAlpha(*lexer->current) || isDigit(*lexer->current)) {
-	readChar(lexer);
+static void read_ident(lexer_t *lexer) {
+  while (is_alpha(*lexer->current) || is_digit(*lexer->current)) {
+	advance(lexer);
   }
 }
 
-static void readNumber(Lexer *lexer) {
+static void read_number(lexer_t *lexer) {
   const char *list = ".xXaAbBcCdDeEfF";
-  while (isDigit(*lexer->current) || strchr(list, *lexer->current) != NULL) {
-	readChar(lexer);
+  while (is_digit(*lexer->current) || strchr(list, *lexer->current) != NULL) {
+	advance(lexer);
   }
 }
 
-static void incrementLine(Lexer *lexer, const char ch) {
+static void increment_line(lexer_t *lexer, const char ch) {
   lexer->line += ch == '\n' ? 1 : 0;
 }
 
-static void readString(Lexer *lexer) {
+static void read_string(lexer_t *lexer) {
   do {
-	readChar(lexer);
-	incrementLine(lexer, *lexer->current);
-  } while (*lexer->current != '"' && !isAtEnd(lexer));
+	advance(lexer);
+	increment_line(lexer, *lexer->current);
+  } while (*lexer->current != '"' && !is_end(lexer));
 }
 
-static void skipWhitespace(Lexer *lexer) {
-  while (isSpace(*lexer->current)) {
-	incrementLine(lexer, *lexer->current);
-	readChar(lexer);
+static void skip_whitespace(lexer_t *lexer) {
+  while (is_space(*lexer->current)) {
+	increment_line(lexer, *lexer->current);
+	advance(lexer);
   }
 }
 
-static Token makeToken(Lexer *lexer, TokenType type) {
+static token_t new_token(lexer_t *lexer, token_type type) {
   const size_t length = lexer->current - lexer->start;
 
-  Token token;
+  token_t token;
   token.type = type;
   token.line = lexer->line;
   token.start = lexer->current - length;
@@ -96,152 +96,151 @@ static Token makeToken(Lexer *lexer, TokenType type) {
   return token;
 }
 
-Token nextToken(Lexer *lexer) {
-  skipWhitespace(lexer);
+token_t lexer_next_token(lexer_t *lexer) {
+  skip_whitespace(lexer);
   lexer->start = lexer->current;
 
-  if (isAlpha(*lexer->current)) {
-	readIdentifier(lexer);
-	return makeToken(lexer, identifierType(lexer));
+  if (is_alpha(*lexer->current)) {
+	read_ident(lexer);
+	return new_token(lexer, ident_type(lexer));
   }
 
-  if (isDigit(*lexer->current)) {
-	readNumber(lexer);
-	return makeToken(lexer, T_NUMBER);
+  if (is_digit(*lexer->current)) {
+	read_number(lexer);
+	return new_token(lexer, T_NUMBER);
   }
 
-  Token token;
+  token_t token;
   switch (*lexer->current) {
-  case '\0': token = makeToken(lexer, T_EOF);
-	break;
-  case '=': {
-	if (peek(lexer) == '=') {
-	  token = makeToken(lexer, T_EQ);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_ASSIGN);
-	}
-	break;
-  }
-  case '!': {
-	if (peek(lexer) == '=') {
-	  token = makeToken(lexer, T_NOT_EQ);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_NOT);
-	}
-	break;
-  }
-  case '<': {
-	if (peek(lexer) == '=') {
-	  token = makeToken(lexer, T_LT_EQ);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_LT);
-	}
-	break;
-  }
-  case '>': {
-	if (peek(lexer) == '=') {
-	  token = makeToken(lexer, T_GT_EQ);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_GT);
-	}
-	break;
-  }
-  case '&': {
-	if (peek(lexer) == '&') {
-	  token = makeToken(lexer, T_AND);
-	  readChar(lexer);
+	case '\0': token = new_token(lexer, T_EOF);
+	  break;
+	case '=': {
+	  if (peek(lexer) == '=') {
+		token = new_token(lexer, T_EQ);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_ASSIGN);
+	  }
 	  break;
 	}
-  }
-  case '|': {
-	if (peek(lexer) == '|') {
-	  token = makeToken(lexer, T_OR);
-	  readChar(lexer);
+	case '!': {
+	  if (peek(lexer) == '=') {
+		token = new_token(lexer, T_NOT_EQ);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_NOT);
+	  }
 	  break;
 	}
-  }
-  case '*': {
-	if (peek(lexer) == '*') {
-	  token = makeToken(lexer, T_POWER);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_ASTERISK);
+	case '<': {
+	  if (peek(lexer) == '=') {
+		token = new_token(lexer, T_LT_EQ);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_LT);
+	  }
+	  break;
 	}
-	break;
-  }
-  case '+': {
-	if (peek(lexer) == '+') {
-	  token = makeToken(lexer, T_PLUS_PLUS);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_PLUS);
+	case '>': {
+	  if (peek(lexer) == '=') {
+		token = new_token(lexer, T_GT_EQ);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_GT);
+	  }
+	  break;
 	}
-	break;
-  }
-  case '-': {
-	if (peek(lexer) == '-') {
-	  token = makeToken(lexer, T_MINUS_MINUS);
-	  readChar(lexer);
-	} else {
-	  token = makeToken(lexer, T_MINUS);
+	case '&': {
+	  if (peek(lexer) == '&') {
+		token = new_token(lexer, T_AND);
+		advance(lexer);
+		break;
+	  }
 	}
-	break;
+	case '|': {
+	  if (peek(lexer) == '|') {
+		token = new_token(lexer, T_OR);
+		advance(lexer);
+		break;
+	  }
+	}
+	case '*': {
+	  if (peek(lexer) == '*') {
+		token = new_token(lexer, T_POWER);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_ASTERISK);
+	  }
+	  break;
+	}
+	case '+': {
+	  if (peek(lexer) == '+') {
+		token = new_token(lexer, T_PLUS_PLUS);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_PLUS);
+	  }
+	  break;
+	}
+	case '-': {
+	  if (peek(lexer) == '-') {
+		token = new_token(lexer, T_MINUS_MINUS);
+		advance(lexer);
+	  } else {
+		token = new_token(lexer, T_MINUS);
+	  }
+	  break;
+	}
+	case '"': {
+	  read_string(lexer);
+	  token = new_token(lexer, T_STRING);
+	  token.end++;
+	  token.length++;
+	  break;
+	}
+	case '/': token = new_token(lexer, T_SLASH);
+	  break;
+	case '%': token = new_token(lexer, T_MODULO);
+	  break;
+	case ',': token = new_token(lexer, T_COMMA);
+	  break;
+	case ';': token = new_token(lexer, T_SEMICOLON);
+	  break;
+	case ':': token = new_token(lexer, T_COLON);
+	  break;
+	case '(': token = new_token(lexer, T_LPAREN);
+	  break;
+	case ')': token = new_token(lexer, T_RPAREN);
+	  break;
+	case '{': token = new_token(lexer, T_LBRACE);
+	  break;
+	case '}': token = new_token(lexer, T_RBRACE);
+	  break;
+	case '[': token = new_token(lexer, T_LBRACKET);
+	  break;
+	case ']': token = new_token(lexer, T_RBRACKET);
+	  break;
+	default: token = new_token(lexer, T_ILLEGAL);
+	  break;
   }
-  case '"': {
-	readString(lexer);
-	token = makeToken(lexer, T_STRING);
-	token.end++;
-	token.length++;
-	break;
-  }
-  case '/': token = makeToken(lexer, T_SLASH);
-	break;
-  case '%': token = makeToken(lexer, T_MODULO);
-	break;
-  case ',': token = makeToken(lexer, T_COMMA);
-	break;
-  case ';': token = makeToken(lexer, T_SEMICOLON);
-	break;
-  case ':': token = makeToken(lexer, T_COLON);
-	break;
-  case '(': token = makeToken(lexer, T_LPAREN);
-	break;
-  case ')': token = makeToken(lexer, T_RPAREN);
-	break;
-  case '{': token = makeToken(lexer, T_LBRACE);
-	break;
-  case '}': token = makeToken(lexer, T_RBRACE);
-	break;
-  case '[': token = makeToken(lexer, T_LBRACKET);
-	break;
-  case ']': token = makeToken(lexer, T_RBRACKET);
-	break;
-  default: token = makeToken(lexer, T_ILLEGAL);
-	break;
-  }
-  readChar(lexer);
+  advance(lexer);
   return token;
 }
 
-Lexer *makeLexer(const char *source) {
-  Lexer *lexer = uai_malloc(sizeof(Lexer));
+lexer_t *lexer_new(const char *input) {
+  lexer_t *lexer = uai_malloc(sizeof(lexer_t));
 
-  const size_t size = strlen(source) + 1;
-  lexer->source = uai_malloc(sizeof(source) * size);
-  strncpy(lexer->source, source, size);
+  lexer->input = uai_malloc(sizeof(input) * (strlen(input) + 1));
+  strcpy(lexer->input, input);
 
   lexer->line = 1;
-  lexer->start = lexer->source;
-  lexer->current = lexer->source;
+  lexer->start = lexer->input;
+  lexer->current = lexer->input;
 
   return lexer;
 }
 
-void freeLexer(Lexer *lexer) {
-  uai_free((void *)lexer->source);
-  uai_free((void *)lexer);
+void lexer_free(lexer_t *lexer) {
+  uai_free(lexer->input);
+  uai_free(lexer);
 }

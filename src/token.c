@@ -1,48 +1,5 @@
 #include "token.h"
 
-static const char *TokenNames[] = {
-	"EOF",
-	"ILLEGAL",
-	"IDENT",
-	"STRING",
-	"NUMBER",
-	"=",
-	"+",
-	"-",
-	"*",
-	"/",
-	"%",
-	"**",
-	"++",
-	"--",
-	"!",
-	"&&",
-	"||",
-	",",
-	";",
-	":",
-	"(",
-	")",
-	"{",
-	"}",
-	"[",
-	"]",
-	"<",
-	">",
-	"==",
-	"<=",
-	">=",
-	"!=",
-	"FUNCTION",
-	"VAR",
-	"TRUE",
-	"FALSE",
-	"IF",
-	"ELSE",
-	"RETURN",
-	"WHILE",
-};
-
-const char *tokenName(TokenType type) {
-  return TokenNames[type];
+const char *token_name(token_type type) {
+  return token_names[type];
 }

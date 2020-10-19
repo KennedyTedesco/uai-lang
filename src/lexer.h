@@ -3,17 +3,15 @@
 
 #include "token.h"
 
-typedef struct {
-  char *source;
+typedef struct lexer_t {
+  char *input;
   const char *start;
   const char *current;
   int line;
-} Lexer;
+} lexer_t;
 
-Token nextToken(Lexer *lexer);
-
-Lexer *makeLexer(const char *source);
-
-void freeLexer(Lexer *lexer);
+token_t lexer_next_token(lexer_t *lexer);
+lexer_t *lexer_new(const char *input);
+void lexer_free(lexer_t *lexer);
 
 #endif

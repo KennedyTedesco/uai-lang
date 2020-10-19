@@ -6,75 +6,75 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_eat_spaces(void) {
-  Lexer *lexer = makeLexer(" var 	foo1  =  \n10.5 != 5f;	");
+  lexer_t *lexer = lexer_new(" var 	foo1  =  \n10.5 != 5f;	");
 
-  TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_VAR, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
   TEST_ASSERT_EQUAL(1, lexer->line);
 
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NOT_EQ, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_EOF, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NOT_EQ, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_EOF, lexer_next_token(lexer).type);
   TEST_ASSERT_EQUAL(2, lexer->line);
 
-  freeLexer(lexer);
+  lexer_free(lexer);
 }
 
 void test_len(void) {
-  Token token;
-  Lexer *lexer = makeLexer("var a = 10 + 1;");
+  token_t token;
+  lexer_t *lexer = lexer_new("var a = 10 + 1;");
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token.type);
   TEST_ASSERT_EQUAL('v', *token.start);
   TEST_ASSERT_EQUAL('a', *(token.start + 1));
   TEST_ASSERT_EQUAL('r', *token.end);
   TEST_ASSERT_EQUAL(3, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_IDENT, token.type);
   TEST_ASSERT_EQUAL('a', *token.start);
   TEST_ASSERT_EQUAL('a', *token.end);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_ASSIGN, token.type);
   TEST_ASSERT_EQUAL('=', *token.start);
   TEST_ASSERT_EQUAL('=', *token.end);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_NUMBER, token.type);
   TEST_ASSERT_EQUAL('1', *token.start);
   TEST_ASSERT_EQUAL('0', *token.end);
   TEST_ASSERT_EQUAL(2, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_PLUS, token.type);
   TEST_ASSERT_EQUAL('+', *token.start);
   TEST_ASSERT_EQUAL('+', *token.end);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_NUMBER, token.type);
   TEST_ASSERT_EQUAL('1', *token.start);
   TEST_ASSERT_EQUAL('1', *token.end);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_SEMICOLON, token.type);
   TEST_ASSERT_EQUAL(';', *token.start);
   TEST_ASSERT_EQUAL(';', *token.end);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  freeLexer(lexer);
+  lexer_free(lexer);
 }
 
 void test_tokens(void) {
-  Lexer *lexer = makeLexer(
+  lexer_t *lexer = lexer_new(
 	  "var foo1 = 10;\n"
 	  "foo_bar;\n"
 	  "_bar;\n"
@@ -102,211 +102,211 @@ void test_tokens(void) {
   );
 
   // var foo1 = 10
-  TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_VAR, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   // foo_bar
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   // _bar
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   // var add = fn(x, y) { x + y }
-  TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_FN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_COMMA, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_PLUS, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_VAR, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_FN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_COMMA, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_PLUS, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   // var result = add(five, ten)
-  TEST_ASSERT_EQUAL(T_VAR, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_COMMA, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_VAR, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_COMMA, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   // !-/*
-  TEST_ASSERT_EQUAL(T_NOT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_MINUS, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SLASH, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASTERISK, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NOT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_MINUS, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SLASH, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASTERISK, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //0.1 < 1.5 > 1
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_GT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_GT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //return false
-  TEST_ASSERT_EQUAL(T_RETURN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_FALSE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_RETURN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_FALSE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //return true
-  TEST_ASSERT_EQUAL(T_RETURN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_TRUE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_RETURN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_TRUE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //if (5 < 10) { true } else { false }
-  TEST_ASSERT_EQUAL(T_IF, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_TRUE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ELSE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_FALSE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IF, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_TRUE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ELSE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_FALSE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //10 == 10
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_EQ, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_EQ, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //10 != 9
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NOT_EQ, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NOT_EQ, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //10 >= 2
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_GT_EQ, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_GT_EQ, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //10 <= 2
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LT_EQ, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LT_EQ, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //[1, 2]
-  TEST_ASSERT_EQUAL(T_LBRACKET, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_COMMA, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RBRACKET, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_LBRACKET, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_COMMA, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RBRACKET, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //true && false
-  TEST_ASSERT_EQUAL(T_TRUE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_AND, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_FALSE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_TRUE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_AND, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_FALSE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //true || false
-  TEST_ASSERT_EQUAL(T_TRUE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_OR, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_FALSE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_TRUE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_OR, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_FALSE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //10 % 2
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_MODULO, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_MODULO, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //2 ** 2
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_POWER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_POWER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //while (true) { 1 }
-  TEST_ASSERT_EQUAL(T_WHILE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_TRUE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RPAREN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_LBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_RBRACE, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_WHILE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_TRUE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RPAREN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_LBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_RBRACE, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //a++
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_PLUS_PLUS, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_PLUS_PLUS, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //a--
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_MINUS_MINUS, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_MINUS_MINUS, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //a = 0xFF
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_NUMBER, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_NUMBER, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
   //a = "foo";
-  TEST_ASSERT_EQUAL(T_IDENT, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_ASSIGN, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_STRING, nextToken(lexer).type);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, nextToken(lexer).type);
+  TEST_ASSERT_EQUAL(T_IDENT, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_ASSIGN, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_STRING, lexer_next_token(lexer).type);
+  TEST_ASSERT_EQUAL(T_SEMICOLON, lexer_next_token(lexer).type);
 
-  freeLexer(lexer);
+  lexer_free(lexer);
 }
 
 void test_tokens_names(void) {
-  Lexer *lexer = makeLexer("var a = 10 + 1;");
-  TEST_ASSERT_EQUAL_STRING("VAR", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING("IDENT", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING("=", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING("NUMBER", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING("+", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING("NUMBER", tokenName(nextToken(lexer).type));
-  TEST_ASSERT_EQUAL_STRING(";", tokenName(nextToken(lexer).type));
+  lexer_t *lexer = lexer_new("var a = 10 + 1;");
+  TEST_ASSERT_EQUAL_STRING("VAR", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING("IDENT", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING("=", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING("NUMBER", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING("+", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING("NUMBER", token_name(lexer_next_token(lexer).type));
+  TEST_ASSERT_EQUAL_STRING(";", token_name(lexer_next_token(lexer).type));
 
-  freeLexer(lexer);
+  lexer_free(lexer);
 }
 
 void test_string(void) {
-  Token token;
-  Lexer *lexer = makeLexer("var foo = \"bar\";");
+  token_t token;
+  lexer_t *lexer = lexer_new("var foo = \"bar\";");
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token.type);
   TEST_ASSERT_EQUAL(3, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_IDENT, token.type);
   TEST_ASSERT_EQUAL(3, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_ASSIGN, token.type);
   TEST_ASSERT_EQUAL(1, token.length);
 
-  token = nextToken(lexer);
+  token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_STRING, token.type);
   TEST_ASSERT_EQUAL(5, token.length);
 
@@ -320,7 +320,10 @@ void test_string(void) {
   TEST_ASSERT_EQUAL('"', *(token.end));
   TEST_ASSERT_EQUAL('r', *(token.end - 1));
 
-  freeLexer(lexer);
+  token = lexer_next_token(lexer);
+  TEST_ASSERT_EQUAL(';', *(token.end));
+
+  lexer_free(lexer);
 }
 
 int main(void) {

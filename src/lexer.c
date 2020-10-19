@@ -83,144 +83,150 @@ static void skip_whitespace(lexer_t *lexer) {
   }
 }
 
-static token_t new_token(lexer_t *lexer, token_type type) {
+token_t *make_token(lexer_t *lexer, token_type type) {
   const size_t length = lexer->current - lexer->start;
 
-  token_t token;
-  token.type = type;
-  token.line = lexer->line;
-  token.start = lexer->current - length;
-  token.length = length == 0 ? 1 : length;
-  token.end = length == 0 ? token.start : (lexer->current - 1);
+  token_t *token = uai_malloc(sizeof(token_t));
+
+  token->type = type;
+  token->line = lexer->line;
+  token->start = lexer->current - length;
+  token->length = length == 0 ? 1 : length;
+  token->end = length == 0 ? token->start : (lexer->current - 1);
+
+  char *literal = uai_malloc(sizeof(char) * (token->length + 1));
+  strncpy(literal, token->start, token->length);
+  *(literal + token->length) = '\0';
+
+  token->literal = literal;
 
   return token;
 }
 
-token_t lexer_next_token(lexer_t *lexer) {
+token_t *lexer_next_token(lexer_t *lexer) {
   skip_whitespace(lexer);
   lexer->start = lexer->current;
 
   if (is_alpha(*lexer->current)) {
 	read_ident(lexer);
-	return new_token(lexer, ident_type(lexer));
+	return make_token(lexer, ident_type(lexer));
   }
 
   if (is_digit(*lexer->current)) {
 	read_number(lexer);
-	return new_token(lexer, T_NUMBER);
+	return make_token(lexer, T_NUMBER);
   }
 
-  token_t token;
+  token_t *token;
   switch (*lexer->current) {
-	case '\0': token = new_token(lexer, T_EOF);
+	case '\0': token = make_token(lexer, T_EOF);
 	  break;
 	case '=': {
 	  if (peek(lexer) == '=') {
-		token = new_token(lexer, T_EQ);
+		token = make_token(lexer, T_EQ);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_ASSIGN);
+		token = make_token(lexer, T_ASSIGN);
 	  }
 	  break;
 	}
 	case '!': {
 	  if (peek(lexer) == '=') {
-		token = new_token(lexer, T_NOT_EQ);
+		token = make_token(lexer, T_NOT_EQ);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_NOT);
+		token = make_token(lexer, T_NOT);
 	  }
 	  break;
 	}
 	case '<': {
 	  if (peek(lexer) == '=') {
-		token = new_token(lexer, T_LT_EQ);
+		token = make_token(lexer, T_LT_EQ);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_LT);
+		token = make_token(lexer, T_LT);
 	  }
 	  break;
 	}
 	case '>': {
 	  if (peek(lexer) == '=') {
-		token = new_token(lexer, T_GT_EQ);
+		token = make_token(lexer, T_GT_EQ);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_GT);
+		token = make_token(lexer, T_GT);
 	  }
 	  break;
 	}
 	case '&': {
 	  if (peek(lexer) == '&') {
-		token = new_token(lexer, T_AND);
+		token = make_token(lexer, T_AND);
 		advance(lexer);
 		break;
 	  }
 	}
 	case '|': {
 	  if (peek(lexer) == '|') {
-		token = new_token(lexer, T_OR);
+		token = make_token(lexer, T_OR);
 		advance(lexer);
 		break;
 	  }
 	}
 	case '*': {
 	  if (peek(lexer) == '*') {
-		token = new_token(lexer, T_POWER);
+		token = make_token(lexer, T_POWER);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_ASTERISK);
+		token = make_token(lexer, T_ASTERISK);
 	  }
 	  break;
 	}
 	case '+': {
 	  if (peek(lexer) == '+') {
-		token = new_token(lexer, T_PLUS_PLUS);
+		token = make_token(lexer, T_PLUS_PLUS);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_PLUS);
+		token = make_token(lexer, T_PLUS);
 	  }
 	  break;
 	}
 	case '-': {
 	  if (peek(lexer) == '-') {
-		token = new_token(lexer, T_MINUS_MINUS);
+		token = make_token(lexer, T_MINUS_MINUS);
 		advance(lexer);
 	  } else {
-		token = new_token(lexer, T_MINUS);
+		token = make_token(lexer, T_MINUS);
 	  }
 	  break;
 	}
 	case '"': {
+	  lexer->start++;
 	  read_string(lexer);
-	  token = new_token(lexer, T_STRING);
-	  token.end++;
-	  token.length++;
+	  token = make_token(lexer, T_STRING);
 	  break;
 	}
-	case '/': token = new_token(lexer, T_SLASH);
+	case '/': token = make_token(lexer, T_SLASH);
 	  break;
-	case '%': token = new_token(lexer, T_MODULO);
+	case '%': token = make_token(lexer, T_MODULO);
 	  break;
-	case ',': token = new_token(lexer, T_COMMA);
+	case ',': token = make_token(lexer, T_COMMA);
 	  break;
-	case ';': token = new_token(lexer, T_SEMICOLON);
+	case ';': token = make_token(lexer, T_SEMICOLON);
 	  break;
-	case ':': token = new_token(lexer, T_COLON);
+	case ':': token = make_token(lexer, T_COLON);
 	  break;
-	case '(': token = new_token(lexer, T_LPAREN);
+	case '(': token = make_token(lexer, T_LPAREN);
 	  break;
-	case ')': token = new_token(lexer, T_RPAREN);
+	case ')': token = make_token(lexer, T_RPAREN);
 	  break;
-	case '{': token = new_token(lexer, T_LBRACE);
+	case '{': token = make_token(lexer, T_LBRACE);
 	  break;
-	case '}': token = new_token(lexer, T_RBRACE);
+	case '}': token = make_token(lexer, T_RBRACE);
 	  break;
-	case '[': token = new_token(lexer, T_LBRACKET);
+	case '[': token = make_token(lexer, T_LBRACKET);
 	  break;
-	case ']': token = new_token(lexer, T_RBRACKET);
+	case ']': token = make_token(lexer, T_RBRACKET);
 	  break;
-	default: token = new_token(lexer, T_ILLEGAL);
+	default: token = make_token(lexer, T_ILLEGAL);
 	  break;
   }
   advance(lexer);

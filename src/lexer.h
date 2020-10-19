@@ -10,7 +10,7 @@ typedef struct lexer_t {
   int line;
 } lexer_t;
 
-token_t lexer_next_token(lexer_t *lexer);
+token_t *lexer_next_token(lexer_t *lexer);
 lexer_t *lexer_new(const char *input);
 void lexer_free(lexer_t *lexer);
 

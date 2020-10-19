@@ -96,13 +96,15 @@ typedef struct keyword_t {
 } keyword_t;
 
 typedef struct token_t {
-  size_t length;
   token_type type;
+  size_t length;
+  char *literal;
   const char *end;
   const char *start;
   int line;
 } token_t;
 
 const char *token_name(token_type type);
+void token_free(token_t *token);
 
 #endif

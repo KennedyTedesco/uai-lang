@@ -23,63 +23,6 @@ void test_eat_spaces(void) {
   lexer_free(lexer);
 }
 
-void test_len(void) {
-  token_t *token;
-  lexer_t *lexer = lexer_new("var a = 10 + 1;");
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_VAR, token->type);
-  TEST_ASSERT_EQUAL('v', *token->start);
-  TEST_ASSERT_EQUAL('a', *(token->start + 1));
-  TEST_ASSERT_EQUAL('r', *token->end);
-  TEST_ASSERT_EQUAL(3, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_IDENT, token->type);
-  TEST_ASSERT_EQUAL('a', *token->start);
-  TEST_ASSERT_EQUAL('a', *token->end);
-  TEST_ASSERT_EQUAL(1, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_ASSIGN, token->type);
-  TEST_ASSERT_EQUAL('=', *token->start);
-  TEST_ASSERT_EQUAL('=', *token->end);
-  TEST_ASSERT_EQUAL(1, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_NUMBER, token->type);
-  TEST_ASSERT_EQUAL('1', *token->start);
-  TEST_ASSERT_EQUAL('0', *token->end);
-  TEST_ASSERT_EQUAL(2, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_PLUS, token->type);
-  TEST_ASSERT_EQUAL('+', *token->start);
-  TEST_ASSERT_EQUAL('+', *token->end);
-  TEST_ASSERT_EQUAL(1, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_NUMBER, token->type);
-  TEST_ASSERT_EQUAL('1', *token->start);
-  TEST_ASSERT_EQUAL('1', *token->end);
-  TEST_ASSERT_EQUAL(1, token->length);
-  token_free(token);
-
-  token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(T_SEMICOLON, token->type);
-  TEST_ASSERT_EQUAL(';', *token->start);
-  TEST_ASSERT_EQUAL(';', *token->end);
-  TEST_ASSERT_EQUAL(1, token->length);
-  token_free(token);
-
-  lexer_free(lexer);
-}
-
 void test_tokens(void) {
   lexer_t *lexer = lexer_new(
 	  "var foo1 = 10;\n"
@@ -303,34 +246,24 @@ void test_string(void) {
 
   token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_VAR, token->type);
-  TEST_ASSERT_EQUAL(3, token->length);
   TEST_ASSERT_EQUAL_STRING("var", token->literal);
   token_free(token);
 
   token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_IDENT, token->type);
-  TEST_ASSERT_EQUAL(3, token->length);
   TEST_ASSERT_EQUAL_STRING("foo", token->literal);
   token_free(token);
 
   token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_ASSIGN, token->type);
-  TEST_ASSERT_EQUAL(1, token->length);
   TEST_ASSERT_EQUAL_STRING("=", token->literal);
   token_free(token);
 
   token = lexer_next_token(lexer);
   TEST_ASSERT_EQUAL(T_STRING, token->type);
-  TEST_ASSERT_EQUAL(3, token->length);
   TEST_ASSERT_EQUAL_STRING("bar", token->literal);
 
-  TEST_ASSERT_EQUAL(T_STRING, token->type);
-  TEST_ASSERT_EQUAL('b', *(token->start));
-  TEST_ASSERT_EQUAL('a', *(token->start + 1));
-  TEST_ASSERT_EQUAL('r', *(token->start + 2));
-
   token = lexer_next_token(lexer);
-  TEST_ASSERT_EQUAL(';', *(token->end));
   TEST_ASSERT_EQUAL_STRING(";", token->literal);
   token_free(token);
 
@@ -340,7 +273,6 @@ void test_string(void) {
 int main(void) {
   UNITY_BEGIN();
 
-  RUN_TEST(test_len);
   RUN_TEST(test_tokens);
   RUN_TEST(test_string);
   RUN_TEST(test_eat_spaces);

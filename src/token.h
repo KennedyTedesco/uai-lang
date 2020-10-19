@@ -97,10 +97,7 @@ typedef struct keyword_t {
 
 typedef struct token_t {
   token_type type;
-  size_t length;
   char *literal;
-  const char *end;
-  const char *start;
   int line;
 } token_t;
 

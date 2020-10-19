@@ -85,19 +85,15 @@ static void skip_whitespace(lexer_t *lexer) {
 
 token_t *make_token(lexer_t *lexer, token_type type) {
   const size_t length = lexer->current - lexer->start;
+  const size_t literal_length = length == 0 ? 1 : length;
 
   token_t *token = uai_malloc(sizeof(token_t));
-
   token->type = type;
   token->line = lexer->line;
-  token->start = lexer->current - length;
-  token->length = length == 0 ? 1 : length;
-  token->end = length == 0 ? token->start : (lexer->current - 1);
 
-  char *literal = uai_malloc(sizeof(char) * (token->length + 1));
-  strncpy(literal, token->start, token->length);
-  *(literal + token->length) = '\0';
-
+  char *literal = uai_malloc(sizeof(char) * (literal_length + 1));
+  strncpy(literal, (lexer->current - length), literal_length);
+  *(literal + literal_length) = '\0';
   token->literal = literal;
 
   return token;

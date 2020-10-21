@@ -116,42 +116,46 @@ token_t *lexer_next_token(lexer_t *lexer) {
 
   switch (*lexer->current) {
 	case '=': {
-	  token->type = T_ASSIGN;
-	  token->literal = dup_string("=");
 	  if (peek(lexer) == '=') {
 		token->type = T_EQ;
 		token->literal = dup_string("==");
 		advance(lexer);
+	  } else {
+		token->type = T_ASSIGN;
+		token->literal = dup_string("=");
 	  }
 	  break;
 	}
 	case '!': {
-	  token->type = T_NOT;
-	  token->literal = dup_string("!");
 	  if (peek(lexer) == '=') {
 		token->type = T_NOT_EQ;
 		token->literal = dup_string("!=");
 		advance(lexer);
+	  } else {
+		token->type = T_NOT;
+		token->literal = dup_string("!");
 	  }
 	  break;
 	}
 	case '<': {
-	  token->type = T_LT;
-	  token->literal = dup_string("<");
 	  if (peek(lexer) == '=') {
 		token->type = T_LT_EQ;
 		token->literal = dup_string("<=");
 		advance(lexer);
+	  } else {
+		token->type = T_LT;
+		token->literal = dup_string("<");
 	  }
 	  break;
 	}
 	case '>': {
-	  token->type = T_GT;
-	  token->literal = dup_string(">");
 	  if (peek(lexer) == '=') {
 		token->type = T_GT_EQ;
 		token->literal = dup_string(">=");
 		advance(lexer);
+	  } else {
+		token->type = T_GT;
+		token->literal = dup_string(">");
 	  }
 	  break;
 	}
@@ -172,32 +176,35 @@ token_t *lexer_next_token(lexer_t *lexer) {
 	  }
 	}
 	case '*': {
-	  token->type = T_ASTERISK;
-	  token->literal = dup_string("*");
 	  if (peek(lexer) == '*') {
 		token->type = T_POWER;
 		token->literal = dup_string("**");
 		advance(lexer);
+	  } else {
+		token->type = T_ASTERISK;
+		token->literal = dup_string("*");
 	  }
 	  break;
 	}
 	case '+': {
-	  token->type = T_PLUS;
-	  token->literal = dup_string("+");
 	  if (peek(lexer) == '+') {
 		token->type = T_PLUS_PLUS;
 		token->literal = dup_string("++");
 		advance(lexer);
+	  } else {
+		token->type = T_PLUS;
+		token->literal = dup_string("+");
 	  }
 	  break;
 	}
 	case '-': {
-	  token->type = T_MINUS;
-	  token->literal = dup_string("-");
 	  if (peek(lexer) == '-') {
 		token->type = T_MINUS_MINUS;
 		token->literal = dup_string("--");
 		advance(lexer);
+	  } else {
+		token->type = T_MINUS;
+		token->literal = dup_string("-");
 	  }
 	  break;
 	}

@@ -10,7 +10,7 @@ Goals of this project:
 
 - Learn C and memory;
 - Learn how to write a compiler and a stack virtual machine to run bytecodes;
-- It doesn't intend to be the safest implementation, as this requires a lot of c knowledge (and, you know, achieving a secure code with C is not that trivial)
+- It doesn't intend to be the safest implementation, as this requires a lot of c knowledge (and, you know, achieving a secure code with C is not that trivial).
 
 TODO:
 
@@ -42,9 +42,9 @@ $ meson test -C builddir/ -v
 Testing using Valgrind (a tool to find memory leaks):
 
 ```bash
-$ meson test -C builddir/ -v --wrap=valgrind
+$ meson test -C builddir/ -v --wrap='valgrind --leak-check=full'
 ```
 
 ### Contributing
 
-Feel free to send a PR. =D
+Feel free to send pull requests and/or tips. =D

@@ -6,7 +6,8 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_tokens(void) {
-  lexer_t *lexer = lexer_new("var foo1 = 10;\n"
+  lexer_t *lexer = lexer_new(
+	  "var foo1 = 10;\n"
 	  "foo_bar ;\n"
 	  "_bar;\n"
 	  "var add = fn( x, y) { x + y };\n"

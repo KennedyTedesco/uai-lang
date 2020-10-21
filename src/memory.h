@@ -5,5 +5,6 @@
 
 void uai_free(void *ptr);
 void *uai_malloc(size_t size);
+char *dup_string(const char *ch);
 
 #endif

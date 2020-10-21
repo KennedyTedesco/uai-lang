@@ -83,156 +83,205 @@ static void skip_whitespace(lexer_t *lexer) {
   }
 }
 
-token_t *make_token(lexer_t *lexer, token_type type) {
+static char *get_literal(lexer_t *lexer) {
   const size_t length = lexer->current - lexer->start;
-  const size_t literal_length = length == 0 ? 1 : length;
 
-  token_t *token = uai_malloc(sizeof(token_t));
-  token->type = type;
-  token->line = lexer->line;
+  char *literal = uai_malloc((length + 1) * sizeof lexer->current);
+  strncpy(literal, (lexer->current - length), length);
+  *(literal + length) = '\0';
 
-  char *literal = uai_malloc(sizeof(char) * (literal_length + 1));
-  strncpy(literal, (lexer->current - length), literal_length);
-  *(literal + literal_length) = '\0';
-  token->literal = literal;
-
-  return token;
+  return literal;
 }
 
 token_t *lexer_next_token(lexer_t *lexer) {
   skip_whitespace(lexer);
   lexer->start = lexer->current;
 
+  token_t *token = uai_malloc(sizeof *token);
+  token->line = lexer->line;
+
   if (is_alpha(*lexer->current)) {
 	read_ident(lexer);
-	return make_token(lexer, ident_type(lexer));
+	token->type = ident_type(lexer);
+	token->literal = get_literal(lexer);
+	return token;
   }
 
   if (is_digit(*lexer->current)) {
 	read_number(lexer);
-	return make_token(lexer, T_NUMBER);
+	token->type = T_NUMBER;
+	token->literal = get_literal(lexer);
+	return token;
   }
 
-  token_t *token;
   switch (*lexer->current) {
-	case '\0': token = make_token(lexer, T_EOF);
-	  break;
 	case '=': {
+	  token->type = T_ASSIGN;
+	  token->literal = dup_string("=");
 	  if (peek(lexer) == '=') {
-		token = make_token(lexer, T_EQ);
+		token->type = T_EQ;
+		token->literal = dup_string("==");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_ASSIGN);
 	  }
 	  break;
 	}
 	case '!': {
+	  token->type = T_NOT;
+	  token->literal = dup_string("!");
 	  if (peek(lexer) == '=') {
-		token = make_token(lexer, T_NOT_EQ);
+		token->type = T_NOT_EQ;
+		token->literal = dup_string("!=");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_NOT);
 	  }
 	  break;
 	}
 	case '<': {
+	  token->type = T_LT;
+	  token->literal = dup_string("<");
 	  if (peek(lexer) == '=') {
-		token = make_token(lexer, T_LT_EQ);
+		token->type = T_LT_EQ;
+		token->literal = dup_string("<=");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_LT);
 	  }
 	  break;
 	}
 	case '>': {
+	  token->type = T_GT;
+	  token->literal = dup_string(">");
 	  if (peek(lexer) == '=') {
-		token = make_token(lexer, T_GT_EQ);
+		token->type = T_GT_EQ;
+		token->literal = dup_string(">=");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_GT);
 	  }
 	  break;
 	}
 	case '&': {
 	  if (peek(lexer) == '&') {
-		token = make_token(lexer, T_AND);
+		token->type = T_AND;
+		token->literal = dup_string("&&");
 		advance(lexer);
 		break;
 	  }
 	}
 	case '|': {
 	  if (peek(lexer) == '|') {
-		token = make_token(lexer, T_OR);
+		token->type = T_OR;
+		token->literal = dup_string("||");
 		advance(lexer);
 		break;
 	  }
 	}
 	case '*': {
+	  token->type = T_ASTERISK;
+	  token->literal = dup_string("*");
 	  if (peek(lexer) == '*') {
-		token = make_token(lexer, T_POWER);
+		token->type = T_POWER;
+		token->literal = dup_string("**");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_ASTERISK);
 	  }
 	  break;
 	}
 	case '+': {
+	  token->type = T_PLUS;
+	  token->literal = dup_string("+");
 	  if (peek(lexer) == '+') {
-		token = make_token(lexer, T_PLUS_PLUS);
+		token->type = T_PLUS_PLUS;
+		token->literal = dup_string("++");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_PLUS);
 	  }
 	  break;
 	}
 	case '-': {
+	  token->type = T_MINUS;
+	  token->literal = dup_string("-");
 	  if (peek(lexer) == '-') {
-		token = make_token(lexer, T_MINUS_MINUS);
+		token->type = T_MINUS_MINUS;
+		token->literal = dup_string("--");
 		advance(lexer);
-	  } else {
-		token = make_token(lexer, T_MINUS);
 	  }
 	  break;
 	}
 	case '"': {
 	  lexer->start++;
 	  read_string(lexer);
-	  token = make_token(lexer, T_STRING);
+	  token->type = T_STRING;
+	  token->literal = get_literal(lexer);
 	  break;
 	}
-	case '/': token = make_token(lexer, T_SLASH);
+	case '/': {
+	  token->type = T_SLASH;
+	  token->literal = dup_string("/");
 	  break;
-	case '%': token = make_token(lexer, T_MODULO);
+	}
+	case '%': {
+	  token->type = T_MODULO;
+	  token->literal = dup_string("%");
 	  break;
-	case ',': token = make_token(lexer, T_COMMA);
+	}
+	case ',': {
+	  token->type = T_COMMA;
+	  token->literal = dup_string(",");
 	  break;
-	case ';': token = make_token(lexer, T_SEMICOLON);
+	}
+	case ';': {
+	  token->type = T_SEMICOLON;
+	  token->literal = dup_string(";");
 	  break;
-	case ':': token = make_token(lexer, T_COLON);
+	}
+	case ':': {
+	  token->type = T_COLON;
+	  token->literal = dup_string(":");
 	  break;
-	case '(': token = make_token(lexer, T_LPAREN);
+	}
+	case '(': {
+	  token->type = T_LPAREN;
+	  token->literal = dup_string("(");
 	  break;
-	case ')': token = make_token(lexer, T_RPAREN);
+	}
+	case ')': {
+	  token->type = T_RPAREN;
+	  token->literal = dup_string(")");
 	  break;
-	case '{': token = make_token(lexer, T_LBRACE);
+	}
+	case '{': {
+	  token->type = T_LBRACE;
+	  token->literal = dup_string("{");
 	  break;
-	case '}': token = make_token(lexer, T_RBRACE);
+	}
+	case '}': {
+	  token->type = T_RBRACE;
+	  token->literal = dup_string("}");
 	  break;
-	case '[': token = make_token(lexer, T_LBRACKET);
+	}
+	case '[': {
+	  token->type = T_LBRACKET;
+	  token->literal = dup_string("[");
 	  break;
-	case ']': token = make_token(lexer, T_RBRACKET);
+	}
+	case ']': {
+	  token->type = T_RBRACKET;
+	  token->literal = dup_string("]");
 	  break;
-	default: token = make_token(lexer, T_ILLEGAL);
+	}
+	case '\0': {
+	  token->type = T_EOF;
+	  token->literal = dup_string("\0");
 	  break;
+	}
+	default: {
+	  token->type = T_ILLEGAL;
+	  token->literal = NULL;
+	  break;
+	}
   }
   advance(lexer);
   return token;
 }
 
 lexer_t *lexer_new(const char *input) {
-  lexer_t *lexer = uai_malloc(sizeof(lexer_t));
+  lexer_t *lexer = uai_malloc(sizeof *lexer);
 
-  lexer->input = uai_malloc(sizeof(input) * (strlen(input) + 1));
+  lexer->input = uai_malloc((strlen(input) + 1) * sizeof input);
   strcpy(lexer->input, input);
 
   lexer->line = 1;

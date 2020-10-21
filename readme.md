@@ -21,7 +21,7 @@ TODO:
 
 Future scope:
 
-- [ ] Unicode support for strings
+- [ ] Unicode support for strings (a hard one :P)
 
 ### Compiling
 

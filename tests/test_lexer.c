@@ -12,7 +12,7 @@ void test_tokens(void) {
 	  "_bar;\n"
 	  "var add = fn( x, y) { x + y };\n"
 	  "!-/*;\n"
-	  "0.1 < 1.5 > 1;\n"
+	  "1 < 2 > 1;\n"
 	  "return false;\n"
 	  "return true ;\n"
 	  "if (5 < 10) { true  } else { false };\n"
@@ -28,7 +28,6 @@ void test_tokens(void) {
 	  "while (true) { 1 };\n"
 	  "a++;\n"
 	  "a-- ;\n"
-	  "a = 0xFF;\n"
 	  "a = \"foo\";\n"
   );
 
@@ -37,7 +36,7 @@ void test_tokens(void) {
 	  {T_VAR, "var", 1},
 	  {T_IDENT, "foo1", 1},
 	  {T_ASSIGN, "=", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // foo_bar;
@@ -73,11 +72,11 @@ void test_tokens(void) {
 	  {T_SEMICOLON, ";", 1},
 
 	  // 0.1 < 1.5 > 1;
-	  {T_NUMBER, "0.1", 1},
+	  {T_INT, "1", 1},
 	  {T_LT, "<", 1},
-	  {T_NUMBER, "1.5", 1},
+	  {T_INT, "2", 1},
 	  {T_GT, ">", 1},
-	  {T_NUMBER, "1", 1},
+	  {T_INT, "1", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // return false;
@@ -93,9 +92,9 @@ void test_tokens(void) {
 	  // if (5 < 10) { true } else { false };
 	  {T_IF, "if", 1},
 	  {T_LPAREN, "(", 1},
-	  {T_NUMBER, "5", 1},
+	  {T_INT, "5", 1},
 	  {T_LT, "<", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_RPAREN, ")", 1},
 	  {T_LBRACE, "{", 1},
 	  {T_TRUE, "true", 1},
@@ -107,34 +106,34 @@ void test_tokens(void) {
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 == 10;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_EQ, "==", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 != 10;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_NOT_EQ, "!=", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 >= 10;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_GT_EQ, ">=", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 <= 10;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_LT_EQ, "<=", 1},
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // [1, 2];
 	  {T_LBRACKET, "[", 1},
-	  {T_NUMBER, "1", 1},
+	  {T_INT, "1", 1},
 	  {T_COMMA, ",", 1},
-	  {T_NUMBER, "2", 1},
+	  {T_INT, "2", 1},
 	  {T_RBRACKET, "]", 1},
 	  {T_SEMICOLON, ";", 1},
 
@@ -151,15 +150,15 @@ void test_tokens(void) {
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 % 2;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_MODULO, "%", 1},
-	  {T_NUMBER, "2", 1},
+	  {T_INT, "2", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // 10 ** 2;
-	  {T_NUMBER, "10", 1},
+	  {T_INT, "10", 1},
 	  {T_POWER, "**", 1},
-	  {T_NUMBER, "2", 1},
+	  {T_INT, "2", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // while (true) { 1 };
@@ -168,7 +167,7 @@ void test_tokens(void) {
 	  {T_TRUE, "true", 1},
 	  {T_RPAREN, ")", 1},
 	  {T_LBRACE, "{", 1},
-	  {T_NUMBER, "1", 1},
+	  {T_INT, "1", 1},
 	  {T_RBRACE, "}", 1},
 	  {T_SEMICOLON, ";", 1},
 
@@ -180,12 +179,6 @@ void test_tokens(void) {
 	  // a--;
 	  {T_IDENT, "a", 1},
 	  {T_MINUS_MINUS, "--", 1},
-	  {T_SEMICOLON, ";", 1},
-
-	  // a = 0xFF;
-	  {T_IDENT, "a", 1},
-	  {T_ASSIGN, "=", 1},
-	  {T_NUMBER, "0xFF", 1},
 	  {T_SEMICOLON, ";", 1},
 
 	  // a = "foo";

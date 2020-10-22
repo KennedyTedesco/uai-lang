@@ -58,9 +58,8 @@ static void read_ident(Lexer *lexer) {
   }
 }
 
-static void read_number(Lexer *lexer) {
-  const char *list = ".xXaAbBcCdDeEfF";
-  while (is_digit(*lexer->current) || strchr(list, *lexer->current) != NULL) {
+static void read_int(Lexer *lexer) {
+  while (is_digit(*lexer->current)) {
 	advance(lexer);
   }
 }
@@ -108,8 +107,8 @@ Token *lexer_next_token(Lexer *lexer) {
   }
 
   if (is_digit(*lexer->current)) {
-	read_number(lexer);
-	token->type = T_NUMBER;
+	read_int(lexer);
+	token->type = T_INT;
 	token->literal = get_literal(lexer);
 	return token;
   }

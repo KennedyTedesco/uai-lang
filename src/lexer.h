@@ -3,15 +3,15 @@
 
 #include "token.h"
 
-typedef struct lexer_t {
+typedef struct Lexer {
   char *input;
   const char *start;
   const char *current;
   int line;
-} lexer_t;
+} Lexer;
 
-token_t *lexer_next_token(lexer_t *lexer);
-lexer_t *lexer_new(const char *input);
-void lexer_free(lexer_t *lexer);
+Token *lexer_next_token(Lexer *lexer);
+Lexer *lexer_new(const char *input);
+void lexer_free(Lexer *lexer);
 
 #endif

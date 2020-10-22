@@ -4,7 +4,7 @@
 #include "token.h"
 #include "memory.h"
 
-static const keyword_t keywords[] = {
+static const Keyword keywords[] = {
 	{2, T_IF, "if"},
 	{2, T_FN, "fn"},
 	{3, T_VAR, "var"},
@@ -16,7 +16,7 @@ static const keyword_t keywords[] = {
 	{0, T_EOF, NULL}
 };
 
-static bool is_end(lexer_t *lexer) {
+static bool is_end(Lexer *lexer) {
   return *lexer->current == '\0';
 }
 
@@ -32,17 +32,17 @@ static bool is_digit(const char ch) {
   return ch >= '0' && ch <= '9';
 }
 
-static char peek(lexer_t *lexer) {
+static char peek(Lexer *lexer) {
   return *(lexer->current + 1);
 }
 
-static void advance(lexer_t *lexer) {
+static void advance(Lexer *lexer) {
   if (!is_end(lexer)) {
 	lexer->current++;
   }
 }
 
-static token_type ident_type(lexer_t *lexer) {
+static TOKEN_TYPE ident_type(Lexer *lexer) {
   const size_t length = lexer->current - lexer->start;
   for (short i = 0; keywords[i].literal != NULL; i++) {
 	if (length == keywords[i].length && strncmp(lexer->start, keywords[i].literal, length) == 0) {
@@ -52,52 +52,52 @@ static token_type ident_type(lexer_t *lexer) {
   return T_IDENT;
 }
 
-static void read_ident(lexer_t *lexer) {
+static void read_ident(Lexer *lexer) {
   while (is_alpha(*lexer->current) || is_digit(*lexer->current)) {
 	advance(lexer);
   }
 }
 
-static void read_number(lexer_t *lexer) {
+static void read_number(Lexer *lexer) {
   const char *list = ".xXaAbBcCdDeEfF";
   while (is_digit(*lexer->current) || strchr(list, *lexer->current) != NULL) {
 	advance(lexer);
   }
 }
 
-static void increment_line(lexer_t *lexer, const char ch) {
+static void increment_line(Lexer *lexer, const char ch) {
   lexer->line += ch == '\n' ? 1 : 0;
 }
 
-static void read_string(lexer_t *lexer) {
+static void read_string(Lexer *lexer) {
   do {
 	advance(lexer);
 	increment_line(lexer, *lexer->current);
   } while (*lexer->current != '"' && !is_end(lexer));
 }
 
-static void skip_whitespace(lexer_t *lexer) {
+static void skip_whitespace(Lexer *lexer) {
   while (is_space(*lexer->current)) {
 	increment_line(lexer, *lexer->current);
 	advance(lexer);
   }
 }
 
-static char *get_literal(lexer_t *lexer) {
+static char *get_literal(Lexer *lexer) {
   const size_t length = lexer->current - lexer->start;
 
-  char *literal = uai_malloc((length + 1) * sizeof lexer->current);
+  char *literal = uai_malloc((length + 1) * (sizeof *lexer->current));
   strncpy(literal, (lexer->current - length), length);
   *(literal + length) = '\0';
 
   return literal;
 }
 
-token_t *lexer_next_token(lexer_t *lexer) {
+Token *lexer_next_token(Lexer *lexer) {
   skip_whitespace(lexer);
   lexer->start = lexer->current;
 
-  token_t *token = uai_malloc(sizeof *token);
+  Token *token = uai_malloc(sizeof *token);
   token->line = lexer->line;
 
   if (is_alpha(*lexer->current)) {
@@ -285,10 +285,10 @@ token_t *lexer_next_token(lexer_t *lexer) {
   return token;
 }
 
-lexer_t *lexer_new(const char *input) {
-  lexer_t *lexer = uai_malloc(sizeof *lexer);
+Lexer *lexer_new(const char *input) {
+  Lexer *lexer = uai_malloc(sizeof *lexer);
 
-  lexer->input = uai_malloc((strlen(input) + 1) * sizeof input);
+  lexer->input = uai_malloc((strlen(input) + 1) * (sizeof *input));
   strcpy(lexer->input, input);
 
   lexer->line = 1;
@@ -298,7 +298,7 @@ lexer_t *lexer_new(const char *input) {
   return lexer;
 }
 
-void lexer_free(lexer_t *lexer) {
+void lexer_free(Lexer *lexer) {
   uai_free(lexer->input);
   uai_free(lexer);
 }

@@ -44,7 +44,7 @@ typedef enum {
   T_ELSE,
   T_RETURN,
   T_WHILE,
-} token_type;
+} TOKEN_TYPE;
 
 static const char *token_names[] = {
 	"EOF",
@@ -89,19 +89,19 @@ static const char *token_names[] = {
 	"WHILE",
 };
 
-typedef struct keyword_t {
+typedef struct Keyword {
   size_t length;
-  token_type type;
+  TOKEN_TYPE type;
   const char *literal;
-} keyword_t;
+} Keyword;
 
-typedef struct token_t {
-  token_type type;
+typedef struct Token {
+  TOKEN_TYPE type;
   char *literal;
   int line;
-} token_t;
+} Token;
 
-const char *token_name(token_type type);
-void token_free(token_t *token);
+const char *token_name(TOKEN_TYPE type);
+void token_free(Token *token);
 
 #endif

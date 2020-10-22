@@ -6,7 +6,7 @@ void setUp(void) {}
 void tearDown(void) {}
 
 void test_tokens(void) {
-  lexer_t *lexer = lexer_new(
+  Lexer *lexer = lexer_new(
 	  "var foo1 = 10;\n"
 	  "foo_bar ;\n"
 	  "_bar;\n"
@@ -32,7 +32,7 @@ void test_tokens(void) {
 	  "a = \"foo\";\n"
   );
 
-  token_t tokens[] = {
+  Token tokens[] = {
 	  // var foo1 = 10;
 	  {T_VAR, "var", 1},
 	  {T_IDENT, "foo1", 1},
@@ -197,8 +197,8 @@ void test_tokens(void) {
 	  {T_EOF, "\0", 1},
   };
 
-  for (size_t i = 0; i < sizeof(tokens) / sizeof(token_t); i++) {
-	token_t *token = lexer_next_token(lexer);
+  for (size_t i = 0; i < sizeof(tokens) / sizeof(*tokens); i++) {
+	Token *token = lexer_next_token(lexer);
 	TEST_ASSERT_EQUAL(tokens[i].type, token->type);
 	TEST_ASSERT_EQUAL_STRING(tokens[i].literal, token->literal);
 	token_free(token);

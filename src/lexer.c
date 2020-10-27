@@ -117,51 +117,51 @@ Token *lexer_next_token(Lexer *lexer) {
 	case '=': {
 	  if (peek(lexer) == '=') {
 		token->type = T_EQ;
-		token->literal = dup_string("==");
+		token->literal = strdup("==");
 		advance(lexer);
 	  } else {
 		token->type = T_ASSIGN;
-		token->literal = dup_string("=");
+		token->literal = strdup("=");
 	  }
 	  break;
 	}
 	case '!': {
 	  if (peek(lexer) == '=') {
 		token->type = T_NOT_EQ;
-		token->literal = dup_string("!=");
+		token->literal = strdup("!=");
 		advance(lexer);
 	  } else {
 		token->type = T_NOT;
-		token->literal = dup_string("!");
+		token->literal = strdup("!");
 	  }
 	  break;
 	}
 	case '<': {
 	  if (peek(lexer) == '=') {
 		token->type = T_LT_EQ;
-		token->literal = dup_string("<=");
+		token->literal = strdup("<=");
 		advance(lexer);
 	  } else {
 		token->type = T_LT;
-		token->literal = dup_string("<");
+		token->literal = strdup("<");
 	  }
 	  break;
 	}
 	case '>': {
 	  if (peek(lexer) == '=') {
 		token->type = T_GT_EQ;
-		token->literal = dup_string(">=");
+		token->literal = strdup(">=");
 		advance(lexer);
 	  } else {
 		token->type = T_GT;
-		token->literal = dup_string(">");
+		token->literal = strdup(">");
 	  }
 	  break;
 	}
 	case '&': {
 	  if (peek(lexer) == '&') {
 		token->type = T_AND;
-		token->literal = dup_string("&&");
+		token->literal = strdup("&&");
 		advance(lexer);
 		break;
 	  }
@@ -169,7 +169,7 @@ Token *lexer_next_token(Lexer *lexer) {
 	case '|': {
 	  if (peek(lexer) == '|') {
 		token->type = T_OR;
-		token->literal = dup_string("||");
+		token->literal = strdup("||");
 		advance(lexer);
 		break;
 	  }
@@ -177,33 +177,33 @@ Token *lexer_next_token(Lexer *lexer) {
 	case '*': {
 	  if (peek(lexer) == '*') {
 		token->type = T_POWER;
-		token->literal = dup_string("**");
+		token->literal = strdup("**");
 		advance(lexer);
 	  } else {
 		token->type = T_ASTERISK;
-		token->literal = dup_string("*");
+		token->literal = strdup("*");
 	  }
 	  break;
 	}
 	case '+': {
 	  if (peek(lexer) == '+') {
 		token->type = T_PLUS_PLUS;
-		token->literal = dup_string("++");
+		token->literal = strdup("++");
 		advance(lexer);
 	  } else {
 		token->type = T_PLUS;
-		token->literal = dup_string("+");
+		token->literal = strdup("+");
 	  }
 	  break;
 	}
 	case '-': {
 	  if (peek(lexer) == '-') {
 		token->type = T_MINUS_MINUS;
-		token->literal = dup_string("--");
+		token->literal = strdup("--");
 		advance(lexer);
 	  } else {
 		token->type = T_MINUS;
-		token->literal = dup_string("-");
+		token->literal = strdup("-");
 	  }
 	  break;
 	}
@@ -216,62 +216,62 @@ Token *lexer_next_token(Lexer *lexer) {
 	}
 	case '/': {
 	  token->type = T_SLASH;
-	  token->literal = dup_string("/");
+	  token->literal = strdup("/");
 	  break;
 	}
 	case '%': {
 	  token->type = T_MODULO;
-	  token->literal = dup_string("%");
+	  token->literal = strdup("%");
 	  break;
 	}
 	case ',': {
 	  token->type = T_COMMA;
-	  token->literal = dup_string(",");
+	  token->literal = strdup(",");
 	  break;
 	}
 	case ';': {
 	  token->type = T_SEMICOLON;
-	  token->literal = dup_string(";");
+	  token->literal = strdup(";");
 	  break;
 	}
 	case ':': {
 	  token->type = T_COLON;
-	  token->literal = dup_string(":");
+	  token->literal = strdup(":");
 	  break;
 	}
 	case '(': {
 	  token->type = T_LPAREN;
-	  token->literal = dup_string("(");
+	  token->literal = strdup("(");
 	  break;
 	}
 	case ')': {
 	  token->type = T_RPAREN;
-	  token->literal = dup_string(")");
+	  token->literal = strdup(")");
 	  break;
 	}
 	case '{': {
 	  token->type = T_LBRACE;
-	  token->literal = dup_string("{");
+	  token->literal = strdup("{");
 	  break;
 	}
 	case '}': {
 	  token->type = T_RBRACE;
-	  token->literal = dup_string("}");
+	  token->literal = strdup("}");
 	  break;
 	}
 	case '[': {
 	  token->type = T_LBRACKET;
-	  token->literal = dup_string("[");
+	  token->literal = strdup("[");
 	  break;
 	}
 	case ']': {
 	  token->type = T_RBRACKET;
-	  token->literal = dup_string("]");
+	  token->literal = strdup("]");
 	  break;
 	}
 	case '\0': {
 	  token->type = T_EOF;
-	  token->literal = dup_string("\0");
+	  token->literal = strdup("\0");
 	  break;
 	}
 	default: {
